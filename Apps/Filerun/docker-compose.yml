@@ -7,12 +7,6 @@ services:
       PUID: $PUID
       PGID: $PGID
       TZ: $TZ
-      TRANSMISSION_WEB_HOME: ''
-      USER: ''
-      PASS: ''
-      WHITELIST: ''
-      PEERPORT: ''
-      HOST_WHITELIST: ''
     x-casaos:
       envs:
         - container: PUID
@@ -24,58 +18,44 @@ services:
         - container: TZ
           description:
             en_us: specify a timezone to use, see this list.
-        - container: TRANSMISSION_WEB_HOME
+      volumes:
+        - container: /config
           description:
-            en_us: Specify the path to an alternative UI folder.
-        - container: USER
+            en_us: Appdata
+      ports:
+        - container: '3120'
           description:
-            en_us: Specify an optional username for the interface
-        - container: PASS
-          description:
-            en_us: Specify an optional password for the interface
-        - container: WHITELIST
-          description:
-            en_us: Specify an optional list of comma separated ip whitelist. Fills rpc-whitelist setting.
-        - container: PEERPORT
-          description:
-            en_us: Specify an optional port for torrent TCP/UDP connections. Fills peer-port setting.
-        - container: HOST_WHITELIST
-          description:
-            en_us: Specify an optional list of comma separated dns name whitelist. Fills rpc-host-whitelist setting.
+            en_us: 'Container Port: 3000'
     ports:
-      - target: 19091
-        published: 9091
+      - target: 3120
+        published: 80
         protocol: tcp
-      - target: 51413
-        published: 51413
-        protocol: tcp
-      - target: 51413
-        published: 51413
-        protocol: udp
-    volumes:
+
+   volumes:
       - type: bind
         source: /DATA/AppData//filerun/html
         target: /var/www/html
       - type: bind
         source: /DATA/AppData/filerun/user-files
         target: /user-files
-   links:
-      - db:db
+        
 x-casaos:
   architectures:
     - amd64
     - arm64
   main: app
   description:
-    en_us: 'Visit homepage: https://hub.docker.com/r/linuxserver/transmission/'
+    en_us: 'Visit homepage: https://hub.docker.com/r/linuxserver/filezilla/'
   tagline:
-    en_us: 'Designed for easy, powerful use. Transmission has the features you want from a BitTorrent client: encryption, a web interface, peer exchange, magnet links, DHT, µTP, UPnP and NAT-PMP port forwarding, webseed support, watch directories, tracker editing, global and per-torrent speed limits, and more.'
-  developer: LinuxServer.io
-  author: WisdomSky
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/transmission.png
-  thumbnail: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/transmission.png
+    en_us: Client is a fast and reliable cross-platform FTP, FTPS and SFTP client with lots of useful features and an intuitive graphical user interface.
+  developer: Gaurav
+  author: Gaurav
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/filezilla-logo.png
+  thumbnail: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/filezilla-logo.png
   title:
-    en_us: Transmission
-  category: LinuxServer.io
-  project_url: http://www.transmissionbt.com/
-  port_map: '9091'
+    en_us: Filerun
+  category: Gaurav
+  project_url: https://filezilla-project.org/
+  port_map: '3120'
+
+
