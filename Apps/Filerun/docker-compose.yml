@@ -1,46 +1,96 @@
-name: Gaurav-Filerun
+name: linuxserver-transmission
 services:
+  db:
+    image: mariadb:10.1
+    environment:
+      MYSQL_ROOT_PASSWORD: your_mysql_root_password
+      MYSQL_USER: your_filerun_username
+      MYSQL_PASSWORD: your_filerun_password
+      MYSQL_DATABASE: your_filerun_database
+    volumes:
+      - /filerun/db:/var/lib/mysql
   app:
     image: filerun/filerun:latest
     restart: unless-stopped
     environment:
-      PUID: $PUID
-      PGID: $PGID
-      TZ: $TZ
+      FR_DB_HOST: db
+      FR_DB_PORT: 3306
+      FR_DB_NAME: your_filerun_database
+      FR_DB_USER: your_filerun_username
+      FR_DB_PASS: your_filerun_password
+      APACHE_RUN_USER: www-data
+      APACHE_RUN_USER_ID: 33
+      APACHE_RUN_GROUP: www-data
+      APACHE_RUN_GROUP_ID: 33
+
+depends_on:
+      - db
+links:
+      - db:db
+      
     x-casaos:
       envs:
-        - container: PUID
+        - container: FR_DB_HOST
           description:
-            en_us: for UserID
-        - container: PGID
+            en_us: db 
+        - container: FR_DB_PORT
           description:
-            en_us: for GroupID
-        - container: TZ
+            en_us: 3306
+        - container: FR_DB_NAME
           description:
-            en_us: specify a timezone to use, see this list.
-      volumes:
-        - container: /user-files
+            en_us: your_filerun_database
+        - container: FR_DB_USER
           description:
-            en_us: Appdata
-        - container: /var/www/html
-           description:
-            en_us: Appdata
-      ports:
-        - container: '3120'
+            en_us: your_filerun_db_username
+        - container: FR_DB_PASS
           description:
-            en_us: 'Container Port: 3120'
-    ports:
-      - target: 3120
-        published: 80
-        protocol: tcp
+            en_us: your_filerun_db_password
+        - container: APACHE_RUN_USER
+          description:
+            en_us: www-data
+        - container: APACHE_RUN_USER_ID
+          description:
+            en_us: 33
+        - container: APACHE_RUN_GROUP
+          description:
+            en_us: www-data
+        - container: APACHE_RUN_GROUP_ID
+          description:
+            en_us: 33
 
-   volumes:
+        - container: MYSQL_ROOT_PASSWORD
+          description:
+            en_us: your_mysql_root_password
+        - container: MYSQL_USER
+          description:
+            en_us: your_mysql_username
+        - container: MYSQL_PASSWORD
+          description:
+            en_us: your_mysql_password
+        - container: MYSQL_DATABASE
+          description:
+            en_us: your_filerun_database
+
+    ports:
+      - target: 29091
+        published: 29091
+        protocol: tcp
+      - target: 31413
+        published: 31413
+        protocol: tcp
+      - target: 531413
+        published: 31413
+        protocol: udp
+    volumes:
       - type: bind
-        source: /DATA/AppData//filerun/html
+        source: /DATA/AppData/filerun/html
         target: /var/www/html
       - type: bind
         source: /DATA/AppData/filerun/user-files
         target: /user-files
+      - type: bind
+        source: /DATA/AppData/filerun/db
+        target: /var/lib/mysql
         
 x-casaos:
   architectures:
@@ -48,17 +98,15 @@ x-casaos:
     - arm64
   main: app
   description:
-    en_us: 'Visit homepage: https://hub.docker.com/r/linuxserver/filezilla/'
+    en_us: 'Visit homepage: https://hub.docker.com/r/linuxserver/transmission/'
   tagline:
-    en_us: Client is a fast and reliable cross-platform FTP, FTPS and SFTP client with lots of useful features and an intuitive graphical user interface.
+    en_us: 'Designed for easy, powerful use. Transmission has the features you want from a BitTorrent client: encryption, a web interface, peer exchange, magnet links, DHT, µTP, UPnP and NAT-PMP port forwarding, webseed support, watch directories, tracker editing, global and per-torrent speed limits, and more.'
   developer: Gaurav
   author: Gaurav
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/filezilla-logo.png
-  thumbnail: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/filezilla-logo.png
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/transmission.png
+  thumbnail: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/transmission.png
   title:
     en_us: Filerun
   category: Gaurav
-  project_url: https://filezilla-project.org/
-  port_map: '3120'
-
-
+  project_url: http://www.transmissionbt.com/
+  port_map: '29091'
