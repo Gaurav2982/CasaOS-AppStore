@@ -19,13 +19,16 @@ services:
           description:
             en_us: specify a timezone to use, see this list.
       volumes:
-        - container: /config
+        - container: /user-files
           description:
+            en_us: Appdata
+        - container: /var/www/html
+           description:
             en_us: Appdata
       ports:
         - container: '3120'
           description:
-            en_us: 'Container Port: 3000'
+            en_us: 'Container Port: 3120'
     ports:
       - target: 3120
         published: 80
