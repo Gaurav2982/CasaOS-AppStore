@@ -1,4 +1,4 @@
-name: linuxserver-transmission
+name: Gaurav-Filerun
 services:
   db:
     image: mariadb:10.1
